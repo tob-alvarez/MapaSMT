@@ -6,11 +6,11 @@ function App() {
 
   return (
     <>
-      <Layout>
         <ProviderMapa>
-          <Mapa/>
+          <Layout>
+              <Mapa/>
+          </Layout>
         </ProviderMapa>
-      </Layout>
     </>
   );
 }

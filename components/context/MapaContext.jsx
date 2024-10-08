@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { createContext, useState } from "react";
+import axios from "../../config/axios";
 
 export const MapaContext = createContext();
 
@@ -7,11 +8,23 @@ export const MapaContext = createContext();
 const ProviderMapa = ({ children }) => {
 
     const [puntosMapa, setPuntosMapa] = useState([]);
+    const [menu, setMenu] = useState([]);
+
+    const traerMenu = async () => {
+        try {
+            const resultado = await axios.get("/mapa/menu");
+            setMenu(resultado.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <MapaContext.Provider
             value={{
-                puntosMapa
+                puntosMapa,
+                menu,
+                traerMenu
             }}
         >
             {children}
