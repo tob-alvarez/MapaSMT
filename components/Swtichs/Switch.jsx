@@ -66,7 +66,6 @@ const IOSSwitch = styled((props) => (
 
 export default function CustomizedSwitches({label, checked}) {
 
-    console.log(checked)
     return (
         <FormGroup>
             <FormControlLabel

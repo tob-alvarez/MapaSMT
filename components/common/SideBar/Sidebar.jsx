@@ -2,18 +2,21 @@ import Box from "@mui/material/Box";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import { Collapse, IconButton, List, ListItemButton, ListItemText } from "@mui/material";
 import TuneIcon from "@mui/icons-material/Tune";
-import Switch from '../../Swtichs/Switch';
+import Switch from '../../Swtichs/Switch';  // Asegúrate de que el componente Switch esté configurado correctamente
 import { MapaContext } from "../../context/MapaContext";
 import { useContext, useEffect, useState } from "react";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import { useNavigate } from "react-router-dom";
 
 export default function ListaPrueba() {
     const [state, setState] = useState({ left: false });
     const [openMenu, setOpenMenu] = useState({}); // Estado para controlar qué menú está abierto
-    const [selectedSwitch, setSelectedSwitch] = useState("Municipalidad"); // El "Switch" seleccionado por defecto
-    const { traerMenu, menu } = useContext(MapaContext);
+    const [selectedSwitch, setSelectedSwitch] = useState('SMT'); // El "Switch" seleccionado por defecto
+    const { traerMenu, menu, setSubOpcionSeleccionada } = useContext(MapaContext);
+    const navigate = useNavigate();
 
+    // Esto lo llamas manualmente o en otro lugar adecuado si traerMenu no está en un ciclo infinito
     useEffect(() => {
         traerMenu();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -26,27 +29,25 @@ export default function ListaPrueba() {
     const handleToggle = (idOpcion) => {
         setOpenMenu((prev) => ({
             ...prev,
-            [idOpcion]: !prev[idOpcion] // Cambiar el estado de abierto/cerrado para cada opción
+            [idOpcion]: !prev[idOpcion], // Cambiar el estado de abierto/cerrado para cada opción
         }));
     };
 
-    // Función para manejar el cambio de estado de los switches
-    const handleSwitchChange = (label) => {
-        setSelectedSwitch(label); // Cambia el estado del Switch seleccionado
+    const handleSwitchChange = (label, subopcion) => {
+        if (selectedSwitch !== label) {
+            setSelectedSwitch(label);
+            setSubOpcionSeleccionada(subopcion);
+        }
     };
 
     const list = () => (
         <Box sx={{ width: 280 }} role="presentation" className="d-flex justify-content-between flex-column h-100">
             <div className="d-flex flex-column justify-content-center align-items-start mt-5">
                 <List component="nav" aria-labelledby="nested-list-subheader" className="w-100">
-                    {/* Switch inicial de Municipalidad */}
-                    <ListItemButton component="a" className="w-100" onChange={() => handleSwitchChange("Municipalidad")}>
-                        <Switch
-                            label={'Municipalidad'}
-                            checked={selectedSwitch === "Municipalidad"}
-                        />
-                    </ListItemButton>
-
+                            <ListItemButton onClick={() => navigate('/admin')} className="w-100">
+                                <ListItemText primary={'ADMIN'} />
+                            </ListItemButton>
+                    {/* Renderización de opciones y subopciones */}
                     {menu.map((item) => (
                         <div key={item.idOpcion}>
                             {/* Elemento principal del menú */}
@@ -58,12 +59,11 @@ export default function ListaPrueba() {
                             {/* Subopciones, colapsan al hacer clic */}
                             <Collapse in={openMenu[item.idOpcion]} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
-                                    <ListItemButton sx={{ pl: 4 }} onChange={() => handleSwitchChange(item.nombre_subopcion)}>
+                                    <ListItemButton sx={{ pl: 4 }} onClick={() => handleSwitchChange(item.nombre_subopcion, item.idSubopcion)}>
                                         <ListItemText primary={item.nombre_subopcion} />
-                                        {/* Switch para la subopción */}
-                                        <Switch
-                                            checked={selectedSwitch === item.nombre_subopcion}
-                                        />
+                                            <Switch
+                                                checked={selectedSwitch === item.nombre_subopcion}
+                                            />
                                     </ListItemButton>
                                 </List>
                             </Collapse>
